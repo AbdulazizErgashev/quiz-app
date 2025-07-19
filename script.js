@@ -96,61 +96,83 @@ const questions = [
   },
 ];
 
+// Joriy ko‘rsatilayotgan savol raqami (index) va to‘g‘ri javoblar sonini boshlang‘ich qiymatga tenglab olamiz
 let currentQuestion = 0;
 let score = 0;
 
+// HTML sahifadagi "quizBox" id ga ega elementni olamiz (savollar shu yerga joylanadi)
 const quizBox = document.getElementById("quizBox");
 
+// Savolni yuklash va variantlarni ko‘rsatish funksiyasi
 function loadQuestion() {
+  // Avvalgi savol va tugmalarni tozalaymiz
   quizBox.innerHTML = "";
 
+  // Agar hali savollar qolgan bo‘lsa, davom etamiz
   if (currentQuestion < questions.length) {
+    // Joriy savolni olamiz
     const q = questions[currentQuestion];
 
+    // Savol sarlavhasini hosil qilamiz
     const questionEl = document.createElement("h2");
     questionEl.textContent = `Savol ${currentQuestion + 1}: ${q.question}`;
-    quizBox.appendChild(questionEl);
+    quizBox.appendChild(questionEl); // Savolni sahifaga qo‘shamiz
 
+    // Variantlar ro‘yxatini yaratamiz
     const optionsList = document.createElement("ul");
 
+    // Har bir variant uchun <li> (list item) hosil qilamiz
     q.options.forEach((optionText) => {
       const li = document.createElement("li");
-      li.classList.add("option");
+      li.classList.add("option"); // Har bir variantga class qo‘shamiz
       li.textContent = optionText;
 
+      // Variant bosilganda ishlovchi hodisa
       li.addEventListener("click", () => {
+        // Boshqa variantlarga bosishni bloklaymiz
         const allOptions = document.querySelectorAll(".option");
         allOptions.forEach((opt) => (opt.style.pointerEvents = "none"));
 
+        // Agar bosilgan variant to‘g‘ri bo‘lsa, yashil bo‘yab, ball qo‘shamiz
         if (optionText === q.answer) {
           li.classList.add("correct");
-          score++;
+          score++; // Ballni oshiramiz
         } else {
+          // Noto‘g‘ri variant qizil rangda ko‘rsatiladi
           li.classList.add("wrong");
         }
 
+        // "Keyingi" yoki "Yakunlash" tugmasini yaratamiz
         const nextBtn = document.createElement("button");
         nextBtn.textContent =
           currentQuestion < questions.length - 1 ? "Next" : "Finish";
+
+        // Tugma bosilganda keyingi savolga o‘tamiz
         nextBtn.addEventListener("click", () => {
-          currentQuestion++;
-          loadQuestion();
+          currentQuestion++; // Savol indeksini oshiramiz
+          loadQuestion(); // Yangi savolni yuklaymiz
         });
 
+        // Tugmani sahifaga qo‘shamiz
         quizBox.appendChild(nextBtn);
       });
 
+      // Variantni variantlar ro‘yxatiga qo‘shamiz
       optionsList.appendChild(li);
     });
 
+    // Variantlar ro‘yxatini sahifaga qo‘shamiz
     quizBox.appendChild(optionsList);
   } else {
+    // Barcha savollar tugagan bo‘lsa, natijani ko‘rsatamiz
     showResult();
   }
 }
 
+// Test yakunida natijani chiqaradigan funksiya
 function showResult() {
   quizBox.innerHTML = `<div class="result"> Quiz tugadi! <br><br> Sizning natijangiz: <strong>${score} / ${questions.length}</strong></div>`;
 }
 
+// Sahifa yuklanganda birinchi savolni yuklaymiz
 loadQuestion();
